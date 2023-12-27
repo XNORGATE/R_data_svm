@@ -1,46 +1,35 @@
-args = commandArgs(TRUE)
+# Load necessary libraries
+library("e1071",lib.loc= "C:/Users/user/AppData/Local/R/win-library/4.2")
 
-Sepal.L = as.numeric(args[1])
-Sepal.W = as.numeric(args[2])
-Petal.L = as.numeric(args[3])
-Petal.W = as.numeric(args[4])
+# Load the trained SVM model
+load("stress_svm_model.RData")  # Replace with the correct path to your trained model
 
+# Receive input arguments from PHP script
+args = commandArgs(trailingOnly = TRUE)
 
-#Sepal.L = 5.9
-#Sepal.W= 3.0
-#Petal.L = 5.1
-#Petal.W= 1.8
+# Assuming the arguments are passed in the correct order
+SleepQuality = as.numeric(args[1])  # First argument
+HeadachesWeekly = as.numeric(args[2])  # Second argument
+AcademicPerformance = as.numeric(args[3])  # Third argument
+StudyLoad = as.numeric(args[4])  # Fourth argument
+ExtracurricularActivities = as.numeric(args[5])  # Fifth argument
+# SleepQuality = 1  # Example value
+# HeadachesWeekly = 1  # Example value
+# AcademicPerformance = 1  # Example value
+# StudyLoad = 1  # Example value
+# ExtracurricularActivities = 1
+# Create a data frame with these values
+# Make sure the column names match those used in training the model
+test_data <- data.frame(
+    `Kindly.Rate.your.Sleep.Quality...` = SleepQuality,
+    `How.many.times.a.week.do.you.suffer.headaches....` = HeadachesWeekly,
+    `How.would.you.rate.you.academic.performance.......` = AcademicPerformance,
+    `how.would.you.rate.your.study.load.` = StudyLoad,
+    `How.many.times.a.week.you.practice.extracurricular.activities....` = ExtracurricularActivities
+)
 
+# Predict using the SVM model
+svm.pred <- predict(svm.model, test_data)
 
-
-# library("httr",lib.loc= "C:/Users/user/AppData/Local/R/win-library/4.2")
-# library("curl",lib.loc= "C:/Users/user/AppData/Local/R/win-library/4.2")
-# library("rjson",lib.loc= "C:/Users/user/AppData/Local/R/win-library/4.2")
-
-#library("httr",lib.loc= "C:/Users/q/AppData/Local/R/win-library/4.2")
-#library("curl",lib.loc= "C:/Users/q/AppData/Local/R/win-library/4.2")
-#library("rjson",lib.loc= "C:/Users/q/AppData/Local/R/win-library/4.2")
-
-
-
-library("e1071",lib.loc= "C:/Users/Dean/AppData/Local/R/win-library/4.3")
-load("iris-svm.RData", .GlobalEnv)
-flower <-data.frame(Sepal.Length=Sepal.L,Sepal.Width=Sepal.W,Petal.Length=Petal.L,Petal.Width=Petal.W,Species=NA)
-svm.pred <- predict(svm.model, flower[,-5])
-ans <- as.vector(svm.pred)
-
-
-print(ans)
-print(Sepal.L)
-print(Sepal.W)
-print(Petal.L)
-print(Petal.W)
-
-dev.off()
-
-
-
-
-
-
-
+# Output the prediction
+print(svm.pred)
